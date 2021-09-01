@@ -10,10 +10,7 @@ import torch
 import yaml
 from easydict import EasyDict as edict
 
-GRIPPER_PC = np.load('gripper_models/panda_pc.npy',
-                     allow_pickle=True).item()['points']
-GRIPPER_PC[:, 3] = 1.
-
+path_to_utils = os.path.join(os.path.dirname(__file__), '../')
 
 def farthest_points(data,
                     nclusters,
@@ -259,6 +256,9 @@ def get_gripper_pc(batch_size, npoints, use_torch=True):
       Represents gripper with the sepcified number of points.
       use_tf: switches between output tensor or numpy array.
     """
+    GRIPPER_PC = np.load(path_to_utils + 'gripper_models/panda_pc.npy',
+                         allow_pickle=True).item()['points']
+    GRIPPER_PC[:, 3] = 1.
     output = np.copy(GRIPPER_PC)
     if npoints != -1:
         assert (npoints > 0 and npoints <= output.shape[0]
@@ -284,7 +284,11 @@ def get_control_point_tensor(batch_size, use_torch=True, device="cpu"):
       Outputs a tensor of shape (batch_size x 6 x 3).
       use_tf: switches between outputing a tensor and outputing a numpy array.
     """
-    control_points = np.load('./gripper_control_points/panda.npy')[:, :3]
+    GRIPPER_PC = np.load(path_to_utils+'gripper_models/panda_pc.npy',
+                         allow_pickle=True).item()['points']
+    GRIPPER_PC[:, 3] = 1.
+
+    control_points = np.load(path_to_utils+'./gripper_control_points/panda.npy')[:, :3]
     control_points = [[0, 0, 0], [0, 0, 0], control_points[0, :],
                       control_points[1, :], control_points[-2, :],
                       control_points[-1, :]]
